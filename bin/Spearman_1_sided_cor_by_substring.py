@@ -1,0 +1,80 @@
+import commands,sys,os
+from scipy import stats
+from scipy.stats import norm
+
+scriptPath=os.path.abspath(os.path.dirname(__file__));  ## absolute script path
+
+# split all selection round files into individual file names
+All_files=sys.argv[1].split(',')
+# Parse output filename from second argunmant
+outfile_name=sys.argv[2]
+
+# Open output file and begin writing
+outfile=open(outfile_name,'w')
+
+# Write header to output file
+header='Motif'+'\t'+'Fraction_list'+'\t'+'P_value[1-sided]'+'\t'+'Z_Score'+'\n'
+outfile.write(header)
+
+# initialize variable that contains range of input files (e.g. for 4 rounds this would be 1-4)
+
+round_list=range(len(All_files))
+
+w_unique_motif={}
+w_complex={}
+
+# For each selection round file, do the following:
+for i in round_list:
+# Open selection round file and read
+    infile=open(All_files[i],'r')
+# Read first line into header variable and ignore
+    header_temp=infile.readline()
+# Start reading from second line
+    line=infile.readline()
+# While there are lines in the file, do the following (i.e. for each k-mer):
+    while(line):
+# Grab the k-mer substring from the file
+        motif=line.split()[0]
+# Grab the relative frequency by substring from the file
+        Fraction=line.split()[3] # *** by_substring ***
+# Put the k-mer substring as a key in the dictionary variable, but it does not yet have a corressponding value
+        w_unique_motif[motif]=''
+# Put the k-mer substring and the selection round number as a key in the dictionary variable, and the relative frequency by substring as the corressponding values (i.e. a value for each round)
+        w_complex[motif+':'+str(i)]=Fraction
+# Read the next line
+        line=infile.readline()
+# Close the input file
+    infile.close()
+
+# For each key in the dictionary variable (i.e. for each k-mer substring)
+for k in w_unique_motif.keys():
+# Write the key (k-mer substring) into the first colomn followed by tab-space)
+    outfile.write(k+'\t')
+# 
+    fraction_list=[]
+# for each round number (i.e. from 1 to final round number) 
+    for i in round_list:
+# Append the relative frequency-by-substring values of the k-mer at each round (i.e. each k-mer for each round)
+        fraction_list.append(w_complex[k+':'+str(i)])
+# Write the relative frequency values in the following colomn, each separated by comma, and then followed by tab-space
+    outfile.write(','.join(fraction_list)+'\t')
+# Convert the values in the fraction_list into string type to be able to parse into the R script using the command line
+    fraction_list=[str(j) for j in fraction_list]
+# Do the same conversions for all the round numbers
+    round_this_list=[str(j) for j in round_list]
+
+# Run the Spearman corellation test (STIII) using an external R script from the command line using relative frequency of k-mer from each round of the SELEX experiment
+    cmd='Rscript'+'\t'+scriptPath+'/Spearman_1_sided_P_value.R'+'\t'+','.join(fraction_list)+'\t'+','.join(round_this_list)
+# Grab p-value as output from command line screen
+    a=commands.getstatusoutput(cmd)
+    P_value=float(a[1])
+# Convert p-value into Z-score using external R script from command line
+    z = norm.ppf(1-P_value, loc=0, scale=1)
+    Z_Score = z
+# Write the p-value and Z-score for each unique k-mer (recall that we are still in a for loop over the unique k-mers)
+    outfile.write(str(P_value)+'\t'+str(Z_Score)+'\n')
+# Close the output file
+outfile.close()
+
+#Voila!
+
