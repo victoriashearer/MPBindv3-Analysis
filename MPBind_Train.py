@@ -220,7 +220,7 @@ if(w_parameter['-U']=='1'):
 # Specify output file name for k-mer counts
             outfile=infile + '.' + str(i) + 'mer' # Fix
 # Run the k-mer counting module from command line
-            cmd='java8'+'\t'+'-jar'+'\t'+kanalyzePath+'\t'+'count'+'\t'+'-f'+'\t'+'fastq'+'\t'+'-k'+'\t'+str(i)+'\t'+'-o'+'\t'+outfile+'\t'+infile
+            cmd='java'+'\t'+'-jar'+'\t'+kanalyzePath+'\t'+'count'+'\t'+'-f'+'\t'+'fastq'+'\t'+'-k'+'\t'+str(i)+'\t'+'-o'+'\t'+outfile+'\t'+infile
             a=commands.getstatusoutput(cmd)
             print a
 # Print time elapsed and status
@@ -242,7 +242,7 @@ elif(w_parameter['-U']=='2'):
         for j in redundant_file_list:
             infile=j
             outfile=w_parameter['-Out']+'/Redundant_Reads/'+j.split('/')[-1].split('.txt')[0]+'.'+i+'mer'       # Fix  .split('.txt')[0] -> .split('/')[-1].split('.txt')[0] 
-            cmd='java8'+'\t'+'-jar'+'\t'+kanalyzePath+'\t'+'count'+'\t'+'-f'+'\t'+'fastq'+'\t'+'-k'+'\t'+str(i)+'\t'+'-o'+'\t'+outfile+'\t'+infile
+            cmd='java'+'\t'+'-jar'+'\t'+kanalyzePath+'\t'+'count'+'\t'+'-f'+'\t'+'fastq'+'\t'+'-k'+'\t'+str(i)+'\t'+'-o'+'\t'+outfile+'\t'+infile
             a=commands.getstatusoutput(cmd)
             print a
             function_Run_time(start_time)
@@ -264,7 +264,7 @@ elif(w_parameter['-U']=='3'):
         for j in unique_file_list:
             infile=j
             outfile='/'.join(j.split('/')[:-1])+'/'+j.split('/')[-1]+'.'+i+'mer'   # Fix
-            cmd='java8'+'\t'+'-jar'+'\t'+kanalyzePath+'\t'+'count'+'\t'+'-f'+'\t'+'fastq'+'\t'+'-k'+'\t'+str(i)+'\t'+'-o'+'\t'+outfile+'\t'+infile
+            cmd='java'+'\t'+'-jar'+'\t'+kanalyzePath+'\t'+'count'+'\t'+'-f'+'\t'+'fastq'+'\t'+'-k'+'\t'+str(i)+'\t'+'-o'+'\t'+outfile+'\t'+infile
             a=commands.getstatusoutput(cmd)
             function_Run_time(start_time)
             Function_Checking_Running_Status(a)
@@ -283,7 +283,7 @@ elif(w_parameter['-U']=='3'):
         for j in redundant_file_list:
             infile=j
             outfile=w_parameter['-Out']+'/Redundant_Reads/'+j.split('/')[-1].split('.txt')[0]+'.'+i+'mer'   # Fix
-            cmd='java8'+'\t'+'-jar'+'\t'+kanalyzePath+'\t'+'count'+'\t'+'-f'+'\t'+'fastq'+'\t'+'-k'+'\t'+str(i)+'\t'+'-o'+'\t'+outfile+'\t'+infile
+            cmd='java'+'\t'+'-jar'+'\t'+kanalyzePath+'\t'+'count'+'\t'+'-f'+'\t'+'fastq'+'\t'+'-k'+'\t'+str(i)+'\t'+'-o'+'\t'+outfile+'\t'+infile
             a=commands.getstatusoutput(cmd)
             function_Run_time(start_time)
             Function_Checking_Running_Status(a)
