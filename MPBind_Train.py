@@ -208,72 +208,81 @@ print 'Starting n-mer calculating ...'
 # This list contains all values k specified by the user for k-mer counting
 nmer_list=w_parameter['-nmer'].split(',')
 
-kanalyzePath="/local/data/public/aaaa3/TestLab/MPBind/Z1_Z3_code/MPBind_v2.1/bin/kanalyze.jar"
+kanalyzePath=scriptPath+"/bin/kanalyze.jar"
 
 # If unique reads only
 if(w_parameter['-U']=='1'):
-# for each value k in list
+    # for each value k in list
     for i in nmer_list:
-# for each txt sequence file in the unique folder 
+        # for each txt sequence file in the unique folder 
         for j in unique_file_list:
             infile=j
-# Specify output file name for k-mer counts
+            # Specify output file name for k-mer counts
             outfile=infile + '.' + str(i) + 'mer' # Fix
-# Run the k-mer counting module from command line
+            #cmd='bash'+'\t'+scriptPath+'/bin/txt2fastq.sh'+'\t'+infile+'\t'+infile+".fastq"
+            #a=commands.getstatusoutput(cmd)
+            #print a
+            # Run the k-mer counting module from command line
             cmd='java'+'\t'+'-jar'+'\t'+kanalyzePath+'\t'+'count'+'\t'+'-f'+'\t'+'fastq'+'\t'+'-k'+'\t'+str(i)+'\t'+'-o'+'\t'+outfile+'\t'+infile
             a=commands.getstatusoutput(cmd)
             print a
-# Print time elapsed and status
+            # Print time elapsed and status
             function_Run_time(start_time)
             Function_Checking_Running_Status(a)
-# Calculate total kmer count
+            # Calculate total kmer count
             cmd='bash'+'\t'+scriptPath+'/bin/totalcount.sh'+'\t'+outfile
             a=commands.getstatusoutput(cmd)
             print a
             total_kmer_count=a[1]
-# Append total count and relative frequency to output file
+            # Append total count and relative frequency to output file
             cmd='bash'+'\t'+scriptPath+'/bin/kmerfile.sh'+'\t'+total_kmer_count+'\t'+outfile
             a=commands.getstatusoutput(cmd)
             print a
 # If redundant reads only
 elif(w_parameter['-U']=='2'):
-# Do the same thing as for unique reads (see above)
+    # Do the same thing as for unique reads (see above)
     for i in nmer_list:
         for j in redundant_file_list:
             infile=j
             outfile=w_parameter['-Out']+'/Redundant_Reads/'+j.split('/')[-1].split('.txt')[0]+'.'+i+'mer'       # Fix  .split('.txt')[0] -> .split('/')[-1].split('.txt')[0] 
+            #cmd='bash'+'\t'+scriptPath+'/bin/txt2fastq.sh'+'\t'+infile+'\t'+infile+".fastq"
+            #a=commands.getstatusoutput(cmd)
+            #print a
             cmd='java'+'\t'+'-jar'+'\t'+kanalyzePath+'\t'+'count'+'\t'+'-f'+'\t'+'fastq'+'\t'+'-k'+'\t'+str(i)+'\t'+'-o'+'\t'+outfile+'\t'+infile
             a=commands.getstatusoutput(cmd)
             print a
             function_Run_time(start_time)
             Function_Checking_Running_Status(a)
-# Calculate total kmer count
+            # Calculate total kmer count
             cmd='bash'+'\t'+scriptPath+'/bin/totalcount.sh'+'\t'+outfile
             a=commands.getstatusoutput(cmd)
             print a
             total_kmer_count=a[1]
-# Append total count and relative frequency to output file
+            # Append total count and relative frequency to output file
             cmd='bash'+'\t'+scriptPath+'/bin/kmerfile.sh'+'\t'+total_kmer_count+'\t'+outfile
             a=commands.getstatusoutput(cmd)
             print a
 
 # If for both unique and redundant 
 elif(w_parameter['-U']=='3'):
-# Do the same as before but twice: one for unique files and another for redundant files
+    # Do the same as before but twice: one for unique files and another for redundant files
     for i in nmer_list:
         for j in unique_file_list:
             infile=j
             outfile='/'.join(j.split('/')[:-1])+'/'+j.split('/')[-1]+'.'+i+'mer'   # Fix
+            #cmd='bash'+'\t'+scriptPath+'/bin/txt2fastq.sh'+'\t'+infile+'\t'+infile+".fastq"
+            #a=commands.getstatusoutput(cmd)
+            #print a
             cmd='java'+'\t'+'-jar'+'\t'+kanalyzePath+'\t'+'count'+'\t'+'-f'+'\t'+'fastq'+'\t'+'-k'+'\t'+str(i)+'\t'+'-o'+'\t'+outfile+'\t'+infile
             a=commands.getstatusoutput(cmd)
             function_Run_time(start_time)
             Function_Checking_Running_Status(a)
-# Calculate total kmer count
+            # Calculate total kmer count
             cmd='bash'+'\t'+scriptPath+'/bin/totalcount.sh'+'\t'+outfile
             a=commands.getstatusoutput(cmd)
             print a
             total_kmer_count=a[1]
-# Append total count and relative frequency to output file
+            # Append total count and relative frequency to output file
             cmd='bash'+'\t'+scriptPath+'/bin/kmerfile.sh'+'\t'+total_kmer_count+'\t'+outfile
             a=commands.getstatusoutput(cmd)
             print a
@@ -283,16 +292,19 @@ elif(w_parameter['-U']=='3'):
         for j in redundant_file_list:
             infile=j
             outfile=w_parameter['-Out']+'/Redundant_Reads/'+j.split('/')[-1].split('.txt')[0]+'.'+i+'mer'   # Fix
+            #cmd='bash'+'\t'+scriptPath+'/bin/txt2fastq.sh'+'\t'+infile+'\t'+infile+".fastq"
+            #a=commands.getstatusoutput(cmd)
+            #print a
             cmd='java'+'\t'+'-jar'+'\t'+kanalyzePath+'\t'+'count'+'\t'+'-f'+'\t'+'fastq'+'\t'+'-k'+'\t'+str(i)+'\t'+'-o'+'\t'+outfile+'\t'+infile
             a=commands.getstatusoutput(cmd)
             function_Run_time(start_time)
             Function_Checking_Running_Status(a)
-# Calculate total kmer count
+            # Calculate total kmer count
             cmd='bash'+'\t'+scriptPath+'/bin/totalcount.sh'+'\t'+outfile
             a=commands.getstatusoutput(cmd)
             print a
             total_kmer_count=a[1]
-# Append total count and relative frequency to output file
+            # Append total count and relative frequency to output file
             cmd='bash'+'\t'+scriptPath+'/bin/kmerfile.sh'+'\t'+total_kmer_count+'\t'+outfile
             a=commands.getstatusoutput(cmd)
             print a
@@ -308,22 +320,22 @@ print 'Starting p-values and Z-Scores calculating ...'
 
 # If unique reads only
 if(w_parameter['-U']=='1'):
-# Initialize folder path variable
+    # Initialize folder path variable
     folder_path=w_parameter['-Out']+'/Unique_Reads/'
-# If control rounds were provided by the user
+    # If control rounds were provided by the user
     if(w_parameter['-RC']!='NULL'):
-# for each k value for k-mer counting
+        # for each k value for k-mer counting
         for i in nmer_list:
-# Initialize final_SELEX variable to the filename of the final selection round
+            # Initialize final_SELEX variable to the filename of the final selection round
             finial_SELEX=w_parameter['-RS'].split(',')[-1].split('/')[-1].split('.txt')[0]+'.unique.'+i+'mer'    # .split('.txt')[0] -> .split('/')[-1].split('.txt')[0] [Fix]
             
-# Initialize final_Control variable to the filename of the final control round
+            # Initialize final_Control variable to the filename of the final control round
             finial_Control=w_parameter['-RC'].split('/')[-1].split('.txt')[0]+'.unique.'+i+'mer' # Fix
-# Initialize list of rounds
+            # Initialize list of rounds
             Round_list=[]
-# for each filename corresponding to each round
+            # for each filename corresponding to each round
             for k in w_parameter['-RS'].split(','):
-# append filename to the list
+                # append filename to the list
                 Round_list.append(folder_path+k.split('/')[-1].split('.txt')[0]+'.unique.'+i+'mer') # Fix
 # Run Fisher's exact test module (STI and STII) on the final selection and control rounds using command line with both k-mer by count and k-mer by read data
             cmd='python'+'\t'+scriptPath+'/bin/Fisher_test_1_sided_SELEX_Vs_Control.py'+'\t'+folder_path+finial_SELEX+'\t'+folder_path+finial_Control+'\t'+folder_path+'Z1.'+i+'mer'
@@ -511,9 +523,3 @@ print '************************'
 print '\n'
 runningTime=time.time() - start_time
 print "Total Running Time:  %.2d:%.2d:%.2d" % (runningTime/3600, (runningTime%3600)/60, runningTime%60)
-
-
-
-
-
-

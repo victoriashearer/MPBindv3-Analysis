@@ -1,8 +1,12 @@
 import commands,sys,os
 from scipy import stats
 from scipy.stats import norm
+import rpy2.robjects as robjs
 
 scriptPath=os.path.abspath(os.path.dirname(__file__));  ## absolute script path
+
+#import cor.test function from R
+cor_test = robjs.r['cor.test']
 
 # split all selection round files into individual file names
 All_files=sys.argv[1].split(',')
@@ -59,18 +63,17 @@ for k in w_unique_motif.keys():
 # Write the relative frequency values in the following colomn, each separated by comma, and then followed by tab-space
     outfile.write(','.join(fraction_list)+'\t')
 # Convert the values in the fraction_list into string type to be able to parse into the R script using the command line
-    fraction_list=[str(j) for j in fraction_list]
+    fraction_list=[float(j) for j in fraction_list]
+    fracs_Rvar = robjs.FloatVector(fraction_list)
 # Do the same conversions for all the round numbers
-    round_this_list=[str(j) for j in round_list]
-
+    round_this_list=[int(j) for j in round_list]
+    rnds_Rvar = robjs.IntVector(round_this_list)
 # Run the Spearman corellation test (STIII) using an external R script from the command line using relative frequency of k-mer from each round of the SELEX experiment
-    cmd='Rscript'+'\t'+scriptPath+'/Spearman_1_sided_P_value.R'+'\t'+','.join(fraction_list)+'\t'+','.join(round_this_list)
+    p_Rvar = cor_test(rnds_Rvar, fracs_Rvar, method='spearman', alternative='greater')
 # Grab p-value as output from command line screen
-    a=commands.getstatusoutput(cmd)
-    P_value=a[1]
+    P_value = np.array(p_Rvar.rx2('p.value'))[0]
 # Convert p-value into Z-score using external R script from command line
     z = norm.ppf(1-P_value, loc=0, scale=1)
-    
     Z_Score = z
 # Write the p-value and Z-score for each unique k-mer (recall that we are still in a for loop over the unique k-mers)
     outfile.write(str(P_value)+'\t'+str(Z_Score)+'\n')
