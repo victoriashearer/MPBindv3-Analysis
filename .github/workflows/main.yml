@@ -13,7 +13,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '2.7' # Specify Python 2 version
+        python-version: '2.7.18' # Specify Python 2 version
 
     - name: Install dependencies
       run: |
