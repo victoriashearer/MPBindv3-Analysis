@@ -10,16 +10,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '2.7.18' # Specify Python 2 version
-
-    - name: Install dependencies
+    - name: Set up Python using Docker
       run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt || true # Skip if no requirements.txt
-
-    - name: Run MPBind_Preprocess script
-      run: |
-        python MPBind_Preprocess.py -Infile "C:\Users\Tiga Han\Desktop\NGS DATA PROCESSING\NR0toR10rawfile\N0.fasta" -t FASTA -Forward_primer GCCTGTTGTGAGCCTCCTAAC -Reverse_primer CATGCTTATTCTTGTCCAAAAC -primer_max_mismatch 3 -Outfile output_file
+        docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace python:2.7 bash -c "
+          python -m pip install --upgrade pip &&
+          pip install -r requirements.txt || true &&
+          python MPBind_Preprocess.py -Infile 'C:\Users\Tiga Han\Desktop\NGS DATA PROCESSING\NR0toR10rawfile\N0.fasta' -t FASTA -Forward_primer GCCTGTTGTGAGCCTCCTAAC -Reverse_primer CATGCTTATTCTTGTCCGGCATC -primer_max_mismatch 2 -Outfile output_file
+        "
