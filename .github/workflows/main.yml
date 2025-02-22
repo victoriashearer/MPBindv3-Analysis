@@ -1,9 +1,9 @@
-name: Run MPBind_Preprocess
+name: Python application
 
 on: [push, pull_request]
 
 jobs:
-  preprocess:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -15,5 +15,5 @@ jobs:
         docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace python:2.7 bash -c "
           python -m pip install --upgrade pip &&
           pip install -r requirements.txt || true &&
-          python MPBind_Preprocess.py -Infile 'C:\Users\Tiga Han\Desktop\NGS DATA PROCESSING\NR0toR10rawfile\N0.fasta' -t FASTA -Forward_primer GCCTGTTGTGAGCCTCCTAAC -Reverse_primer CATGCTTATTCTTGTCCGGCATC -primer_max_mismatch 2 -Outfile output_file
+          python MPBind_Preprocess.py -Infile 'C:\\Users\\Tiga Han\\Desktop\\NGS DATA PROCESSING\\NR0toR10rawfile\\N0.fasta' -t FASTA -Forward_primer GCCTGTTGTGAGCCTCCTAAC -Reverse_primer CATGCTTATTCTTGTCCGGCATC -primer_max_mismatch 2 -Outfile output_file
         "
